@@ -1,5 +1,7 @@
 #include "Die.h"
 #include "Player.h"
+#include "OutputFormatter.h"
+
 #include <vector>
 #include <algorithm>
 #include <iostream>
@@ -73,15 +75,17 @@ public:
             vector<ScoringCombo> result = RollDice();
             
             //2. Output the resulting dice.
-            cout << "Roll Result: ";
+            cout << "\n --> Roll Result: ";
             for(int i = 0; i < dice.size(); i++)
                 cout << dice[i].GetDieFace() << ", ";
             cout << "\n";
 
             //3. Check for Farkle. If farkled.  The round is over.
             if(result.size() == 0)
-            {
-                cout << " <!!-- Farkle! --!!>\nYou lose all points this round...\n";
+            {   
+                vector<string> output = {activePlayer->name + " Farkled!", 
+                    "You lose all points this round..."};
+                cout << OutputFormatter(output).GetResult() << "\n";
                 roundScore = 0;
                 farkle = true;
             }
@@ -129,9 +133,14 @@ public:
                 if(choice_roll != 1)
                 {
                     player_end = true;
-                    cout << "<!!------------------ Final Round Score: ";
-                    cout << roundScore;
-                    cout << " ---------------------------!!>";
+                    cout << "\n\n";
+                    vector<string> output {"Round Result"};
+                    stringstream ss;
+                    ss << activePlayer->name << " scored ";
+                    ss << roundScore;
+                    ss << " points this round!";
+                    output.push_back(ss.str());
+                    cout << OutputFormatter(output).GetResult();
                     activePlayer->score += roundScore;
                 }
 

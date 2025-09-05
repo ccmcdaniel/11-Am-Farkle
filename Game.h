@@ -1,4 +1,5 @@
 #include "Round_Imp.h"
+#include "OutputFormatter.h"
 
 class Game
 {
@@ -18,13 +19,24 @@ public:
         //Reset Players
         players = vector<Player>();
 
-        //1. Setup Players
-        Player p1, p2;
-        p1 = {"Player 1", 0};
-        p2 = {"Player 2", 0};
+        //Get Player count
+        cout << "How many players? ";
+        cin >> numPlayers;
 
-        players.push_back(p1);
-        players.push_back(p2);
+        //Needed when you have a getline statement that
+        //immediately follows a cin statement.
+        cin.ignore();
+
+        //Get the name of each player
+        for(int i = 0; i < numPlayers; i++)
+        {
+            Player p;
+            cout << "Player " << i + 1 << "'s name: ";
+            cin >> p.name;
+
+            p.score = 0;
+            players.push_back(p);
+        }
     }
 
     void SimulateGame()
@@ -33,12 +45,14 @@ public:
         {
             for(int i = 0; i < players.size() && CheckForWinner() == false; i++)
             {
-                cout << "******************************************************\n";
-                cout << "            ";
-                cout << players[i].name << "'s Round    Current Score: ";
-                cout << players[i].score << "\n";
-                cout << "******************************************************\n";
+                cout << "\n\n";
+                stringstream ss;
+                ss << "Score: ";
+                ss << players[i].score;
 
+                cout << "\n\n";
+                vector<string> output = {players[i].name + "'s Round", ss.str()};
+                cout << OutputFormatter(output).GetResult() << "\n\n";
                 activeRound = Round(&players[i]);
                 activeRound.RunRound();
             }
@@ -51,8 +65,12 @@ public:
         {
             if(players[i].score >= 10000)
             {
-                cout << " Winner: " << players[i].name << "\n";
-                cout << " Final Score: " << players[i].score << "\n";
+               vector<string> output;
+               output.push_back("Winner: " + players[i].name);
+               stringstream ss;
+               ss << "Final Score: ";
+               ss << players[i].score;
+               output.push_back(ss.str());
             }
         }
 
